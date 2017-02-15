@@ -37,6 +37,7 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     // MARK: - Image Picker Delegate Method
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        self.imageToUpload.contentMode = .scaleAspectFit
         self.imageToUpload.image = info["UIImagePickerControllerOriginalImage"] as! UIImage?
         dismiss(animated: true, completion: nil)
     }

@@ -9,25 +9,35 @@
 import UIKit
 import FirebaseStorage
 import FirebaseDatabase
+import FirebaseAuth
 
 class FeedTableViewController: UITableViewController {
     var uploads = [Upload]()
     var databaseRef: FIRDatabaseReference!
 
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Where all our data lives
+        self.databaseRef = FIRDatabase.database().reference().child("posts")
+        tableView.estimatedRowHeight = 400
+        tableView.rowHeight = UITableViewAutomaticDimension
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        //Presenting view controller in viewDidLoad was sort of buggy. So doing it here seems to work more consistently.
+        if FIRAuth.auth()?.currentUser == nil {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "loginView")
         self.present(controller, animated: false, completion: nil)
-        self.navigationItem.title = "Feed"
-        self.databaseRef = FIRDatabase.database().reference().child("posts")
-
+        } else {
+            
         getUploads()
-        tableView.estimatedRowHeight = 400
-        tableView.rowHeight = UITableViewAutomaticDimension
-        
+        }
     }
-
+    
+   
     func getUploads() {
         databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
             var newUploads: [Upload] = []
@@ -64,7 +74,7 @@ class FeedTableViewController: UITableViewController {
         cell.commentLabel.text = nil
         cell.uploadImage.image = nil
         
-        
+        //Set cell's properties
         cell.commentLabel.text = anUpload.comment
         
         let storageRef = FIRStorage.storage().reference().child("images/\(anUpload.imageURL!)")

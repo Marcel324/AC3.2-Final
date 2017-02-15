@@ -11,6 +11,7 @@ import FirebaseDatabase
 import FirebaseAuth
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
+    var ref: FIRDatabaseReference!
     
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
@@ -18,14 +19,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
     }
     @IBAction func loginButton(_ sender: UIButton) {
+        self.ref = FIRDatabase.database().reference()
+        
     
-        //Checks if password and email matches an existing user
         if let password = self.passwordTextField.text, let email = self.emailTextField.text {
             FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
-                
                 //If we have a user, go into the tabcontroller of the app
                 if user != nil {
                     self.dismiss(animated: true, completion: nil)
@@ -45,6 +46,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBAction func registerButton(_ sender: UIButton) {
         if let email = emailTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
+                
                 
                 //If registration meets requirements. Goes straight into the feed of the app
                 if user != nil {
